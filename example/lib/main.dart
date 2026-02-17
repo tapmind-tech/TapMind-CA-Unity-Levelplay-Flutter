@@ -61,22 +61,27 @@ class _AdsScreenState extends State<AdsScreen>
     implements LevelPlayInitListener, LevelPlayBannerAdViewListener {
   bool _isInitialized = false;
   bool _showBanner = false;
-  String _statusMessage = 'Initializing...';
+  bool _isLoading = false;
+  bool _isBannerLoading = false;
+  bool _isInterstitialLoading = false;
+  bool _isRewardedLoading = false;
+  String _statusMessage = 'Initializing SDK...';
 
   // ignore: prefer_final_fields - recreated when showing banner after hide
   GlobalKey<LevelPlayBannerAdViewState> _bannerKey =
       GlobalKey<LevelPlayBannerAdViewState>();
   final LevelPlayAdSize _adSize = LevelPlayAdSize.BANNER;
 
-  late final LevelPlayRewardedAd _rewardedAd;
-  late final LevelPlayInterstitialAd _interstitialAd;
+  LevelPlayRewardedAd? _rewardedAd;
+  LevelPlayInterstitialAd? _interstitialAd;
+  bool _interstitialListenerSetup = false;
+  bool _rewardedListenerSetup = false;
+  bool _shouldShowInterstitialAfterLoad = false;
+  bool _shouldShowRewardedAfterLoad = false;
 
   @override
   void initState() {
     super.initState();
-    _rewardedAd = LevelPlayRewardedAd(adUnitId: _rewardedAdUnitId);
-    _interstitialAd = LevelPlayInterstitialAd(adUnitId: _interstitialAdUnitId);
-
     WidgetsBinding.instance.addPostFrameCallback((_) => _initLevelPlay());
   }
 
@@ -84,10 +89,15 @@ class _AdsScreenState extends State<AdsScreen>
     if (_appKey.isEmpty) {
       setState(() {
         _statusMessage = 'Unsupported platform';
-        _isInitialized = true;
+        _isLoading = false;
       });
       return;
     }
+
+    setState(() {
+      _isLoading = true;
+      _statusMessage = 'Initializing...';
+    });
 
     try {
       if (Platform.isIOS) {
@@ -107,17 +117,22 @@ class _AdsScreenState extends State<AdsScreen>
 
       await LevelPlay.init(initRequest: initRequest, initListener: this);
 
+      // Initialize ad instances after SDK init
+      _rewardedAd = LevelPlayRewardedAd(adUnitId: _rewardedAdUnitId);
+      _interstitialAd = LevelPlayInterstitialAd(adUnitId: _interstitialAdUnitId);
+
       if (mounted) {
         setState(() {
           _statusMessage = 'Ready';
           _isInitialized = true;
+          _isLoading = false;
         });
       }
     } on PlatformException catch (e) {
       if (mounted) {
         setState(() {
           _statusMessage = 'Init failed: ${e.message}';
-          _isInitialized = true;
+          _isLoading = false;
         });
       }
     }
@@ -126,7 +141,7 @@ class _AdsScreenState extends State<AdsScreen>
   @override
   void onInitSuccess(LevelPlayConfiguration configuration) {
     debugPrint('LevelPlay init success: $configuration');
-    _setupInterstitialAndRewardedListeners();
+    // Don't load ads automatically - wait for user to click buttons
   }
 
   @override
@@ -136,6 +151,7 @@ class _AdsScreenState extends State<AdsScreen>
 
   void _showBannerAd() {
     setState(() {
+      _isBannerLoading = true;
       _showBanner = true;
       _bannerKey = GlobalKey<LevelPlayBannerAdViewState>();
     });
@@ -143,44 +159,101 @@ class _AdsScreenState extends State<AdsScreen>
 
   void _hideBannerAd() {
     _bannerKey.currentState?.destroy();
-    setState(() => _showBanner = false);
+    setState(() {
+      _showBanner = false;
+      _isBannerLoading = false;
+    });
   }
 
-  void _setupInterstitialAndRewardedListeners() {
-    _interstitialAd.setListener(_InterstitialListener(
-      onLoaded: () {},
-      onLoadFailed: (_) => _showNonAutoDismissSnackBar('Interstitial load failed'),
-      onDisplayed: () => _showSnackBar('Interstitial displayed'),
-      onClosed: () {
-        _showSnackBar('Interstitial closed');
-        _interstitialAd.loadAd();
-      },
-    ));
-    _rewardedAd.setListener(_RewardedListener(
-      onRewarded: (r, _) => _showSnackBar('Rewarded! ${r.name}: ${r.amount}'),
-      onLoaded: () {},
-      onLoadFailed: (_) => _showNonAutoDismissSnackBar('Rewarded load failed'),
-      onClosed: () => _rewardedAd.loadAd(),
-    ));
-    _interstitialAd.loadAd();
-    _rewardedAd.loadAd();
-  }
 
   Future<void> _showInterstitialAd() async {
-    if (await _interstitialAd.isAdReady()) {
-      _interstitialAd.showAd(placementName: 'Default');
+    if (_interstitialAd == null) return;
+    
+    // Set up listener on first call
+    if (!_interstitialListenerSetup) {
+      _interstitialAd!.setListener(_InterstitialListener(
+        onLoaded: () async {
+          if (mounted) {
+            setState(() => _isInterstitialLoading = false);
+          }
+          // Automatically show ad if user requested it
+          if (_shouldShowInterstitialAfterLoad) {
+            _shouldShowInterstitialAfterLoad = false;
+            _interstitialAd?.showAd(placementName: 'Default');
+          }
+        },
+        onLoadFailed: (_) {
+          if (mounted) {
+            setState(() {
+              _isInterstitialLoading = false;
+              _shouldShowInterstitialAfterLoad = false;
+            });
+          }
+          _showNonAutoDismissSnackBar('Interstitial load failed');
+        },
+        onDisplayed: () => _showSnackBar('Interstitial displayed'),
+        onClosed: () {
+          _showSnackBar('Interstitial closed');
+          _interstitialAd?.loadAd();
+        },
+      ));
+      _interstitialListenerSetup = true;
+    }
+    
+    setState(() => _isInterstitialLoading = true);
+    
+    if (await _interstitialAd!.isAdReady()) {
+      setState(() => _isInterstitialLoading = false);
+      _interstitialAd!.showAd(placementName: 'Default');
     } else {
-      _showSnackBar('Interstitial loading... Tap again when ready.');
-      _interstitialAd.loadAd();
+      _shouldShowInterstitialAfterLoad = true;
+      _showSnackBar('Loading interstitial ad...');
+      _interstitialAd!.loadAd();
+      // Ad will show automatically when loaded via onLoaded callback
     }
   }
 
   Future<void> _showRewardedAd() async {
-    if (await _rewardedAd.isAdReady()) {
-      _rewardedAd.showAd(placementName: 'Default');
+    if (_rewardedAd == null) return;
+    
+    // Set up listener on first call
+    if (!_rewardedListenerSetup) {
+      _rewardedAd!.setListener(_RewardedListener(
+        onRewarded: (r, _) => _showSnackBar('Rewarded! ${r.name}: ${r.amount}'),
+        onLoaded: () async {
+          if (mounted) {
+            setState(() => _isRewardedLoading = false);
+          }
+          // Automatically show ad if user requested it
+          if (_shouldShowRewardedAfterLoad) {
+            _shouldShowRewardedAfterLoad = false;
+            _rewardedAd?.showAd(placementName: 'Default');
+          }
+        },
+        onLoadFailed: (_) {
+          if (mounted) {
+            setState(() {
+              _isRewardedLoading = false;
+              _shouldShowRewardedAfterLoad = false;
+            });
+          }
+          _showNonAutoDismissSnackBar('Rewarded load failed');
+        },
+        onClosed: () => _rewardedAd?.loadAd(),
+      ));
+      _rewardedListenerSetup = true;
+    }
+    
+    setState(() => _isRewardedLoading = true);
+    
+    if (await _rewardedAd!.isAdReady()) {
+      setState(() => _isRewardedLoading = false);
+      _rewardedAd!.showAd(placementName: 'Default');
     } else {
-      _showSnackBar('Rewarded loading... Tap again when ready.');
-      _rewardedAd.loadAd();
+      _shouldShowRewardedAfterLoad = true;
+      _showSnackBar('Loading rewarded ad...');
+      _rewardedAd!.loadAd();
+      // Ad will show automatically when loaded via onLoaded callback
     }
   }
 
@@ -215,73 +288,93 @@ class _AdsScreenState extends State<AdsScreen>
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
+        child: _buildAdInterface(),
+      ),
+    );
+  }
+
+  Widget _buildAdInterface() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (_isLoading) ...[
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                const SizedBox(width: 8),
+              ],
+              Text(
                 _statusMessage,
                 style: TextStyle(
                   color: _isInitialized ? Colors.green : Colors.orange,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _AdButton(
-                      label: 'Show Banner Ad',
-                      icon: Icons.view_agenda,
-                      onPressed: _isInitialized ? _showBannerAd : null,
-                    ),
-                    const SizedBox(height: 16),
-                    _AdButton(
-                      label: 'Show Interstitial Ad',
-                      icon: Icons.fullscreen,
-                      onPressed: _isInitialized ? _showInterstitialAd : null,
-                    ),
-                    const SizedBox(height: 16),
-                    _AdButton(
-                      label: 'Show Rewarded Ad',
-                      icon: Icons.star,
-                      onPressed: _isInitialized ? _showRewardedAd : null,
-                    ),
-                    if (_showBanner) ...[
-                      const SizedBox(height: 24),
-                      _AdButton(
-                        label: 'Hide Banner',
-                        icon: Icons.close,
-                        onPressed: _hideBannerAd,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-            if (_showBanner)
-              Container(
-                width: _adSize.width.toDouble(),
-                height: _adSize.height.toDouble(),
-                alignment: Alignment.center,
-                color: Colors.grey[200],
-                child: LevelPlayBannerAdView(
-                  key: _bannerKey,
-                  adUnitId: _bannerAdUnitId,
-                  adSize: _adSize,
-                  listener: this,
-                  placementName: 'DefaultBanner',
-                  onPlatformViewCreated: () {
-                    _bannerKey.currentState?.loadAd();
-                  },
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
-      ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _AdButton(
+                  label: 'Show Banner Ad',
+                  icon: Icons.view_agenda,
+                  onPressed: _isInitialized ? _showBannerAd : null,
+                  isLoading: _isBannerLoading,
+                ),
+                const SizedBox(height: 16),
+                _AdButton(
+                  label: 'Show Interstitial Ad',
+                  icon: Icons.fullscreen,
+                  onPressed: _isInitialized ? _showInterstitialAd : null,
+                  isLoading: _isInterstitialLoading,
+                ),
+                const SizedBox(height: 16),
+                _AdButton(
+                  label: 'Show Rewarded Ad',
+                  icon: Icons.star,
+                  onPressed: _isInitialized ? _showRewardedAd : null,
+                  isLoading: _isRewardedLoading,
+                ),
+                if (_showBanner) ...[
+                  const SizedBox(height: 24),
+                  _AdButton(
+                    label: 'Hide Banner',
+                    icon: Icons.close,
+                    onPressed: _hideBannerAd,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+        if (_showBanner)
+          Container(
+            width: _adSize.width.toDouble(),
+            height: _adSize.height.toDouble(),
+            alignment: Alignment.center,
+            color: Colors.grey[200],
+            child: LevelPlayBannerAdView(
+              key: _bannerKey,
+              adUnitId: _bannerAdUnitId,
+              adSize: _adSize,
+              listener: this,
+              placementName: 'DefaultBanner',
+              onPlatformViewCreated: () {
+                _bannerKey.currentState?.loadAd();
+              },
+            ),
+          ),
+      ],
     );
   }
 
@@ -289,11 +382,17 @@ class _AdsScreenState extends State<AdsScreen>
   @override
   void onAdLoaded(LevelPlayAdInfo adInfo) {
     debugPrint('Banner onAdLoaded: $adInfo');
+    if (mounted) {
+      setState(() => _isBannerLoading = false);
+    }
   }
 
   @override
   void onAdLoadFailed(LevelPlayAdError error) {
     debugPrint('Banner onAdLoadFailed: $error');
+    if (mounted) {
+      setState(() => _isBannerLoading = false);
+    }
     _showNonAutoDismissSnackBar('Banner load failed');
   }
 
@@ -320,11 +419,13 @@ class _AdButton extends StatelessWidget {
   final String label;
   final IconData icon;
   final VoidCallback? onPressed;
+  final bool isLoading;
 
   const _AdButton({
     required this.label,
     required this.icon,
     this.onPressed,
+    this.isLoading = false,
   });
 
   @override
@@ -332,9 +433,15 @@ class _AdButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon),
-        label: Text(label),
+        onPressed: isLoading ? null : onPressed,
+        icon: isLoading
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : Icon(icon),
+        label: Text(isLoading ? 'Loading...' : label),
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(

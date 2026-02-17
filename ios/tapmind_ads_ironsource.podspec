@@ -16,6 +16,8 @@ A new Flutter plugin project.
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
   s.dependency 'TapMindISAdapter', '~> 1.0.1'
+  # Google Mobile Ads SDK (AdMob) - Required by TapMind adapter
+  s.dependency 'Google-Mobile-Ads-SDK', '>= 11.0'
   s.platform = :ios, '15.0'
 
   # Flutter.framework does not contain a i386 slice.

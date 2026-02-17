@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - Google-Mobile-Ads-SDK (12.14.0):
+  - Google-Mobile-Ads-SDK (13.0.0):
     - GoogleUserMessagingPlatform (>= 1.1)
   - GoogleUserMessagingPlatform (3.1.0)
   - integration_test (0.0.1):
@@ -14,11 +14,12 @@ PODS:
   - IronSourceSDK/Ads (9.2.0.0)
   - tapmind_ads_ironsource (0.0.1):
     - Flutter
+    - Google-Mobile-Ads-SDK (>= 11.0)
     - TapMindISAdapter (~> 1.0.1)
   - TapMindISAdapter (1.0.1):
     - IronSourceSDK
     - TapMindSDK
-  - TapMindSDK (1.1.0):
+  - TapMindSDK (1.1.3):
     - Google-Mobile-Ads-SDK
     - GoogleUserMessagingPlatform
   - unity_levelplay_mediation (9.0.1):
@@ -52,16 +53,16 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  Google-Mobile-Ads-SDK: 4534fd2dfcd3f705c5485a6633c5188d03d4eed2
+  Google-Mobile-Ads-SDK: 96498d53355e438e2d932277e5e8e41a824fe4d4
   GoogleUserMessagingPlatform: befe603da6501006420c206222acd449bba45a9c
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   IronSourceAdQualitySDK: 56314ade811a5226f76dfd377bc09aca0d6610c0
   IronSourceSDK: 66e1483cd62fb63162a965651f6f41c6b91664db
-  tapmind_ads_ironsource: 4ece84d11214f6d7caea571d9681f4f3ef81e196
+  tapmind_ads_ironsource: e482857ea3cb84ea4f995bd65b752cba4106f0ca
   TapMindISAdapter: b8213e754d896fc1d82d7740c3939b360ff4d600
-  TapMindSDK: e0bd78904e46d139d0efac8cc489775ace966a93
+  TapMindSDK: a863c09e34ce62e000566f739b1eac8a61571bd3
   unity_levelplay_mediation: df4612c8c669631ab7adf441d854705455ea93ce
 
-PODFILE CHECKSUM: 263a3e327ec8c049d1083c4cdd9efcd73625e571
+PODFILE CHECKSUM: 08c03d8044406258f9c7cb82ab32dc41648c854e
 
 COCOAPODS: 1.16.2
