@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
-A new Flutter plugin project.
+A Flutter plugin for integrating TapMind ads into your Flutter applications. Supports both Android and iOS platforms.
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }

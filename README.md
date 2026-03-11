@@ -1,6 +1,6 @@
 # tapmind_ads_ironsource
 
-A new Flutter plugin project.
+A Flutter plugin for integrating TapMind ads into your Flutter applications. Supports both Android and iOS platforms.
 
 ## Getting Started
 
