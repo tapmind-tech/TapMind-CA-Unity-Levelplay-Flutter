@@ -15,7 +15,7 @@ A new Flutter plugin project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'TapMindISAdapter', '~> 1.0.1'
+  s.dependency 'TapMindISAdapter'
   # Google Mobile Ads SDK (AdMob) - Required by TapMind adapter
   s.dependency 'Google-Mobile-Ads-SDK', '>= 11.0'
   s.platform = :ios, '15.0'
