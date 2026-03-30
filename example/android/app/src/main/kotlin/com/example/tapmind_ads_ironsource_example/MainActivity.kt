@@ -1,4 +1,4 @@
-package com.example.tapmind_ads_ironsource_example
+package com.prod.ironandroid
 
 import io.flutter.embedding.android.FlutterActivity
 

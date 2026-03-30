@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.tapmind_ads_ironsource_example"
+    namespace = "com.prod.ironandroid"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "29.0.14206865" // 16KB page size support
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.tapmindandroid"
+        applicationId = "com.prod.ironandroid"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
