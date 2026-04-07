@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'tapmind_ads_ironsource'
-  s.version          = '0.0.5'
+  s.version          = '0.0.6'
   s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
 A Flutter plugin for integrating TapMind ads into your Flutter applications. Supports both Android and iOS platforms.
@@ -15,7 +15,7 @@ A Flutter plugin for integrating TapMind ads into your Flutter applications. Sup
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'TapMindISAdapter','1.0.3'
+  s.dependency 'TapMindISAdapter'
   # Google Mobile Ads SDK (AdMob) - Required by TapMind adapter
   s.dependency 'Google-Mobile-Ads-SDK', '>= 11.0'
   s.platform = :ios, '15.0'
