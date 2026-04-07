@@ -1,6 +1,4 @@
-## 0.0.4
+## 0.0.5
 
-* Introduced standardized adapter structure across all mediation partners.
-* Unified naming conventionsfor better clarity and brand consistency.
-* Optimized ad request → response flow for faster and more reliable mediation handling.
-* Enhanced placement handling system to support flexible and scalable configurations.
+* Update Google Mobile Ads SDK to com.google.android.gms:play-services-ads:25.0.0 for android
+* Add various ad events to monitor and analyze all ad-related activities effectively
