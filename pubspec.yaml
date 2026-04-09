@@ -1,11 +1,11 @@
 name: tapmind_ads_ironsource
 description: "A Flutter plugin for integrating TapMind ads into your Flutter applications. Supports both Android and iOS platforms."
-version: 0.0.6
+version: 0.0.7
 homepage:
 
 environment:
-  sdk: ^3.9.2
-  flutter: '>=3.3.0'
+  sdk: ^3.6.0
+  flutter: '>=3.27.0'
 
 dependencies:
   flutter:

@@ -1,5 +1,5 @@
 group = "com.example.tapmind_ads_ironsource"
-version = "0.0.6"
+version = "0.0.7"
 
 buildscript {
     ext.kotlin_version = "2.1.0"

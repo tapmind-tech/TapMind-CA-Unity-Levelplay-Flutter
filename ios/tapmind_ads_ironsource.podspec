@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'tapmind_ads_ironsource'
-  s.version          = '0.0.6'
+  s.version          = '0.0.7'
   s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
 A Flutter plugin for integrating TapMind ads into your Flutter applications. Supports both Android and iOS platforms.
