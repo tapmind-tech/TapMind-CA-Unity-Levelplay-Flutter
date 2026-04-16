@@ -1,3 +1,8 @@
+## 0.0.8
+
+* Fixed the gradle mismatch issue
+* update to adapter version 2.1.5
+
 ## 0.0.7
 
 * Dart version 3.6 support added
