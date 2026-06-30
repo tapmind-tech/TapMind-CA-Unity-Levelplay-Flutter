@@ -1,30 +1,31 @@
 PODS:
   - Flutter (1.0.0)
-  - Google-Mobile-Ads-SDK (13.1.0):
+  - Google-Mobile-Ads-SDK (13.6.0):
     - GoogleUserMessagingPlatform (>= 1.1)
   - GoogleUserMessagingPlatform (3.1.0)
   - integration_test (0.0.1):
     - Flutter
-  - IronSourceAdQualitySDK (9.1.1)
-  - IronSourceSDK (9.2.0.0):
-    - IronSourceSDK/AdQuality (= 9.2.0.0)
-    - IronSourceSDK/Ads (= 9.2.0.0)
-  - IronSourceSDK/AdQuality (9.2.0.0):
-    - IronSourceAdQualitySDK (~> 9.1.1)
-  - IronSourceSDK/Ads (9.2.0.0)
-  - tapmind_ads_ironsource (0.0.1):
+  - IronSourceAdQualitySDK (9.4.0)
+  - IronSourceSDK (9.4.0.0):
+    - IronSourceSDK/AdQuality (= 9.4.0.0)
+    - IronSourceSDK/Ads (= 9.4.0.0)
+  - IronSourceSDK/AdQuality (9.4.0.0):
+    - IronSourceAdQualitySDK (~> 9.4.0)
+  - IronSourceSDK/Ads (9.4.0.0)
+  - tapmind_ads_ironsource (1.0.0):
     - Flutter
     - Google-Mobile-Ads-SDK (>= 11.0)
-    - TapMindISAdapter
-  - TapMindISAdapter (2.1.1):
+    - TapMindISAdapter (= 2.1.12)
+    - TapMindSDK (= 1.2.8)
+  - TapMindISAdapter (2.1.12):
     - IronSourceSDK
-    - TapMindSDK
-  - TapMindSDK (1.1.7):
+    - TapMindSDK (= 1.2.8)
+  - TapMindSDK (1.2.8):
     - Google-Mobile-Ads-SDK
     - GoogleUserMessagingPlatform
-  - unity_levelplay_mediation (9.0.1):
+  - unity_levelplay_mediation (9.2.0):
     - Flutter
-    - IronSourceSDK (= 9.2.0.0)
+    - IronSourceSDK (= 9.4.0.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -53,15 +54,15 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  Google-Mobile-Ads-SDK: 8429bef6ee1a4e322b0a5571b64217ed8317a3d5
+  Google-Mobile-Ads-SDK: 6e501ace4af8d63e967bd45497c8b2b05821163d
   GoogleUserMessagingPlatform: befe603da6501006420c206222acd449bba45a9c
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  IronSourceAdQualitySDK: 56314ade811a5226f76dfd377bc09aca0d6610c0
-  IronSourceSDK: 66e1483cd62fb63162a965651f6f41c6b91664db
-  tapmind_ads_ironsource: 6c4c5b4873e53d1a1a707efcc1c7ac8a3b6b1092
-  TapMindISAdapter: 233323d12d75528313d7bd94d6ad24cdc04b3e8b
-  TapMindSDK: 6535e7490f65d3019c4d48d954acf1c5eb10458c
-  unity_levelplay_mediation: df4612c8c669631ab7adf441d854705455ea93ce
+  IronSourceAdQualitySDK: 7414cf810bdfbc67c3d58536469a923a3a452ac5
+  IronSourceSDK: 8112211f22915d2633a2a152d327b184fe80bf05
+  tapmind_ads_ironsource: d9fa1d10b4e78b97b82b27d5bfa9ed85cb8ea9a9
+  TapMindISAdapter: 8520e9b87182125c2a10d290c9bae22a70288dc0
+  TapMindSDK: c6a278ade2812e872505797b259a06dd948eb5c4
+  unity_levelplay_mediation: 3fcb792a7ba67edcfacd011c78178aff0d97a185
 
 PODFILE CHECKSUM: 08c03d8044406258f9c7cb82ab32dc41648c854e
 

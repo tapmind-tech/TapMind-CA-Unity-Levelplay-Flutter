@@ -1,3 +1,9 @@
+## 1.0.0
+
+* Remove Error Logs
+* Reduce Response Size
+* update to adapter version 2.1.16
+
 ## 0.0.8
 
 * Fixed the gradle mismatch issue
