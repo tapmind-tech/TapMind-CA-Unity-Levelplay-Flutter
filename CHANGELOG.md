@@ -1,3 +1,7 @@
+## 1.0.1
+
+* Remove some unwanted code
+
 ## 1.0.0
 
 * Remove Error Logs
